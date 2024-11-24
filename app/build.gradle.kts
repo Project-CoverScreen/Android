@@ -38,4 +38,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    implementation("com.google.code.gson:gson:2.8.9")
+    implementation(files("libs/spotify-app-remote-release-0.8.0.aar"))
+    implementation("com.spotify.android:auth:1.2.3")
 }

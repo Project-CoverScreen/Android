@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
 
@@ -10,6 +11,14 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.DayNight">
+        <activity android:name="com.spotify.sdk.android.auth.LoginActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+
+        <meta-data android:name="com.spotify.sdk.android.authentication.redirect_uri"
+            android:value="https://google.com"/>
+
+        <meta-data android:name="com.spotify.sdk.android.authentication.client_id"
+            android:value="d813dda7f82f41a58570c637b240efb3"/>
 
         <activity
 

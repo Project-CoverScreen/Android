@@ -1,69 +1,65 @@
 package com.example.radiolucas;
 
-import androidx.appcompat.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
+import android.util.Log;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.radiolucas.cover.CoverSave;
+import com.example.radiolucas.cover.CoverSaveManager;
+import com.spotify.android.appremote.api.SpotifyAppRemote;
+import com.spotify.sdk.android.auth.AuthorizationClient;
+import com.spotify.sdk.android.auth.AuthorizationResponse;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ImageView imageView;
-    private boolean isImageChanged = false;
+    private static final int REQUEST_CODE = 1337;
+
+    StorageManager storageManager = new StorageManager(this);
+    Spotify spotify = new Spotify(this);
+    CoverSaveManager coverSaveManager = new CoverSaveManager(this);
+    //Resize resize = new Resize();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        spotify.authenticateSpotify();
+        storageManager.createAppFolder("Cover");
+        storageManager.createAppFolder("Resize");
+        coverSaveManager.createCoverDirectories();
+        //resize.compresserImage(this);
 
-        imageView = findViewById(R.id.imageView);
-        Button button = findViewById(R.id.button);
+    }
 
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int i = 0;
-                if (i == 0) {
-                    imageView.setImageResource(R.drawable.imgtest1);
-                    i = i + 1;
-                } else if (i == 1) {
-                    imageView.setImageResource(R.drawable.imgtest2);
-                    i = i + 1;
-                } else if (i == 2) {
-                    imageView.setImageResource(R.drawable.imgtest3);
-                    i = i + 1;
-                } else if (i == 3) {
-                    imageView.setImageResource(R.drawable.imgtest4);
-                    i = i + 1;
-                }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+
+        if (requestCode == REQUEST_CODE) {
+            AuthorizationResponse response = AuthorizationClient.getResponse(resultCode, intent);
+
+            switch (response.getType()) {
+                case TOKEN:
+                    spotify.connectToSpotifyRemote(response.getAccessToken());
+                    break;
+                case ERROR:
+                    Log.e("SpotifyAuth", "Auth error: " + response.getError());
+                    break;
+                default:
+                    Log.e("SpotifyAuth", "Auth result: " + response.getType());
             }
-        });
-    }
-    @Override
-    public void onStart()  {super.onStart();}
-
-    @Override
-    public void onRestart(){super.onRestart();}
-
-    @Override
-    public void onPause()  {super.onPause();}
-
-    @Override
-    public void onResume() {super.onResume();}
-
-    @Override
-    public void onStop() {super.onStop();}
-
-    @Override
-    public void onDestroy() {super.onDestroy();}
-
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
+        }
     }
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
+    protected void onStop() {
+        super.onStop();
+        // Disconnect from Spotify to avoid memory leaks
+        if (spotify.mSpotifyAppRemote != null && spotify.mSpotifyAppRemote.isConnected()) {
+            SpotifyAppRemote.disconnect(spotify.mSpotifyAppRemote);
+        }
     }
 }
