@@ -1,27 +1,33 @@
 package com.example.radiolucas;
 
-import android.Manifest;
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.os.Environment;
 import android.util.Log;
-
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+/**
+ * The StorageManager class provides functionality to manage storage operations such as creating folders and files.
+ */
 public class StorageManager {
     private static final int PERMISSION_REQUEST_CODE = 100;
     private final MainActivity activity;
 
+    /**
+     * Constructs a new StorageManager instance.
+     *
+     * @param activity the main activity of the application
+     */
     public StorageManager(MainActivity activity) {
         this.activity = activity;
     }
 
-    // Créer un dossier pour l'application
+    /**
+     * Creates a folder in the external files directory of the application.
+     *
+     * @param folderName the name of the folder to create
+     * @return the created folder, or null if the folder could not be created
+     */
     public File createAppFolder(String folderName) {
         File folder;
         folder = new File(activity.getExternalFilesDir(null), folderName);
@@ -37,17 +43,8 @@ public class StorageManager {
         return folder;
     }
 
-    // Créer un fichier dans le dossier
-    public boolean createFile(File folder, String fileName, String content) {
-        try {
-            File file = new File(folder, fileName);
-            FileWriter writer = new FileWriter(file);
-            writer.write(content);
-            writer.close();
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
+    public boolean checkFileExists(String coverPath) {
+        File file = new File(coverPath);
+        return file.exists();
     }
 }

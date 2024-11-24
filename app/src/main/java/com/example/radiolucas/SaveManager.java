@@ -1,4 +1,4 @@
-package com.example.radiolucas.cover;
+package com.example.radiolucas;
 
 import android.content.Context;
 import android.os.Environment;
@@ -8,7 +8,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class CoverSaveManager {
+/**
+ * The SaveManager class provides functionality to manage saving files to the device.
+ */
+public class SaveManager {
     private static final String TAG = "CoverSaveManager";
     private static final String BASE_DIR = "Cover";
     private static final String NATIVE_SUBDIR = "native";
@@ -16,11 +19,18 @@ public class CoverSaveManager {
 
     private final Context context;
 
-    public CoverSaveManager(Context context) {
+    /**
+     * Constructs a new SaveManager instance.
+     *
+     * @param context the context of the application
+     */
+    public SaveManager(Context context) {
         this.context = context;
     }
 
-    // Créer l'arborescence complète des dossiers
+    /**
+     * Creates the directory structure for saving cover files.
+     */
     public void createCoverDirectories() {
         File baseDir = getBaseDirectory();
         File nativeDir = new File(baseDir, NATIVE_SUBDIR);
@@ -31,51 +41,68 @@ public class CoverSaveManager {
         createDirectory(resizeDir);
     }
 
-    // Méthode générique pour obtenir le dossier de base
+    /**
+     * Gets the base directory for saving cover files.
+     *
+     * @return the base directory file
+     */
     private File getBaseDirectory() {
         return new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), BASE_DIR);
     }
 
-    // Créer un répertoire
+    /**
+     * Creates a directory if it does not already exist.
+     *
+     * @param directory the directory to create
+     * @return true if the directory was created or already exists, false otherwise
+     */
     private boolean createDirectory(File directory) {
         if (!directory.exists()) {
             boolean created = directory.mkdirs();
             if (created) {
-                Log.d(TAG, "Répertoire créé : " + directory.getAbsolutePath());
+                Log.d(TAG, "Directory created: " + directory.getAbsolutePath());
                 return true;
             } else {
-                Log.e(TAG, "Échec de création du répertoire : " + directory.getAbsolutePath());
+                Log.e(TAG, "Failed to create directory: " + directory.getAbsolutePath());
                 return false;
             }
         }
         return true;
     }
 
-    // MEC TON CODE CERST PAS POSSIBLE C PAS PSSIBLE C PAS POSSIBLE
-    // Sauvegarder un fichier avec des options flexibles
+    /**
+     * Saves a file with flexible options.
+     *
+     * @param data      the data to save
+     * @param prefix    the prefix for the file name
+     * @param extension the file extension
+     * @param location  the storage location
+     * @return the saved file, or null if an error occurred
+     */
     public File saveFile(byte[] data, String prefix, String extension, StorageLocation location) {
         try {
-            // Sélectionner le bon dossier
             File targetDir = getTargetDirectory(location);
-
-            // Générer un nom de fichier unique
             String fileName = prefix + extension;
             File targetFile = new File(targetDir, fileName);
 
-            // Écrire les données
             try (FileOutputStream fos = new FileOutputStream(targetFile)) {
                 fos.write(data);
                 fos.close();
-                Log.d(TAG, "Fichier sauvegardé : " + targetFile.getAbsolutePath());
+                Log.d(TAG, "File saved: " + targetFile.getAbsolutePath());
                 return targetFile;
             }
         } catch (IOException e) {
-            Log.e(TAG, "Erreur lors de la sauvegarde du fichier", e);
+            Log.e(TAG, "Error saving file", e);
             return null;
         }
     }
 
-    // Obtenir le répertoire cible en fonction de la localisation
+    /**
+     * Gets the target directory based on the storage location.
+     *
+     * @param location the storage location
+     * @return the target directory file
+     */
     private File getTargetDirectory(StorageLocation location) {
         File baseDir = getBaseDirectory();
 
@@ -89,26 +116,41 @@ public class CoverSaveManager {
         }
     }
 
-    // Sauvegarder un fichier avec des paramètres par défaut
+    /**
+     * Saves a file with default parameters.
+     *
+     * @param data the data to save
+     * @return the saved file, or null if an error occurred
+     */
     public File saveFile(byte[] data) {
         return saveFile(data, "cover", ".jpeg", StorageLocation.BASE);
     }
 
-    // Méthode utilitaire pour copier un fichier existant
+    /**
+     * Copies an existing file to a new location with new parameters.
+     *
+     * @param sourceFile the source file to copy
+     * @param prefix     the prefix for the new file name
+     * @param extension  the file extension for the new file
+     * @param location   the storage location for the new file
+     * @return the copied file, or null if an error occurred
+     */
     public File copyFile(File sourceFile, String prefix, String extension, StorageLocation location) {
         try {
-            // Lire les données du fichier source
             byte[] fileData = java.nio.file.Files.readAllBytes(sourceFile.toPath());
-
-            // Sauvegarder avec les nouveaux paramètres
             return saveFile(fileData, prefix, extension, location);
         } catch (IOException e) {
-            Log.e(TAG, "Erreur lors de la copie du fichier", e);
+            Log.e(TAG, "Error copying file", e);
             return null;
         }
     }
 
-    // Supprimer un fichier
+    /**
+     * Deletes a file.
+     *
+     * @param file the file to delete
+     * @return true if the file was deleted, false otherwise
+     */
     public boolean deleteFile(File file) {
         if (file != null && file.exists()) {
             return file.delete();
@@ -116,7 +158,9 @@ public class CoverSaveManager {
         return false;
     }
 
-    // Énumération des types de sous-dossiers
+    /**
+     * Enumeration of storage locations.
+     */
     public enum StorageLocation {
         BASE, NATIVE, RESIZE
     }

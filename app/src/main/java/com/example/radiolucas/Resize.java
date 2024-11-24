@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -38,10 +39,9 @@ public class Resize {
             FileOutputStream outStream = new FileOutputStream(new File(out));
             resizedImage.compress(Bitmap.CompressFormat.PNG, 100, outStream);
             outStream.close();
-            System.out.println("Image redimensionnée.");
+            Log.e("Resize", "Image redimensionnée. ");
         } catch (IOException e) {
-            System.out.println("Erreur lors du redimensionnement de l'image.");
-            e.printStackTrace();
+            Log.e("Resize", "Image non redimensionnée. " + e.getMessage());
         }
     }
 

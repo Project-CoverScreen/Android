@@ -1,10 +1,10 @@
 package com.example.radiolucas;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.example.radiolucas.cover.CoverInfo;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
@@ -13,9 +13,13 @@ import com.spotify.sdk.android.auth.AuthorizationClient;
 import com.spotify.sdk.android.auth.AuthorizationRequest;
 import com.spotify.sdk.android.auth.AuthorizationResponse;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+/**
+ * The Spotify class provides functionality to connect to the Spotify app remote and authenticate the user.
+ */
 public class Spotify {
 
     private static final String CLIENT_ID = "fc99f5a7950c4d11b44dca56a05bffc6"; // Replace with your client ID
@@ -23,11 +27,22 @@ public class Spotify {
     private static final int REQUEST_CODE = 1337;
     private final MainActivity activity;
     public SpotifyAppRemote mSpotifyAppRemote;
+    public String Uri;
 
-    public Spotify(MainActivity activity) {
-        this.activity = activity;
+    /**
+     * Constructs a new Spotify instance.
+     *
+     * @param context the main activity of the application
+     */
+    public Spotify(MainActivity context) {
+        this.activity = context;
     }
 
+    /**
+     * Connects to the Spotify app remote using the provided access token.
+     *
+     * @param accessToken the access token for Spotify
+     */
     public void connectToSpotifyRemote(String accessToken) {
         ConnectionParams connectionParams = new ConnectionParams.Builder(CLIENT_ID)
                 .setRedirectUri(REDIRECT_URI)
@@ -41,27 +56,20 @@ public class Spotify {
                 mSpotifyAppRemote = spotifyAppRemote;
                 Log.e("SpotifyRemote", "Connected! Yay!");
 
+                // Subscribe to player state and fetch asynchronously
                 mSpotifyAppRemote.getPlayerApi().subscribeToPlayerState().setEventCallback(playerState -> {
-                    new Thread(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            Downloader coverDownloader = new Downloader();
-
-                            try {
-
-                                PlayerState updatedPlayerState = getPlayerStateWithTimeout();
-                                assert updatedPlayerState.track.imageUri.raw != null;
-                                Log.e("Currently Playing", updatedPlayerState.track.imageUri.raw);
-                                CoverInfo Info = new CoverInfo(playerState.track.imageUri.raw);
-                                assert playerState.track.imageUri.raw != null;
-                                coverDownloader.downloadFile(Info, activity);
-
-                            } catch (Exception e) {
-                                Log.e("SpotifyRemote", "Error fetching player state", e);
-                            }
-                        }
-                    }).start();
+                    fetchUriAsync()
+                            .thenAccept(uri -> {
+                                activity.runOnUiThread(() -> {
+                                    Toast.makeText(activity, "Cover URI : " + uri, Toast.LENGTH_LONG).show();
+                                    activity.setCoverUri(uri);
+                                });
+                                Log.e("SpotifyRemote", "Cover URI : " + uri);
+                            })
+                            .exceptionally(e -> {
+                                Log.e("SpotifyRemote", "Error fetching URI asynchronously", e);
+                                return null;
+                            });
                 });
             }
 
@@ -72,32 +80,54 @@ public class Spotify {
         });
     }
 
+    /**
+     * Fetches the URI asynchronously using CompletableFuture.
+     *
+     * @return a CompletableFuture containing the URI
+     */
+    private CompletableFuture<String> fetchUriAsync() {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                PlayerState playerState = getPlayerStateWithTimeout();
+                return playerState.track.imageUri.raw;
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to fetch player state", e);
+            }
+        });
+    }
+
+    /**
+     * Retrieves the player state with a timeout.
+     *
+     * @return the player state
+     * @throws Exception if an error occurs while retrieving the player state
+     */
     @NonNull
     private PlayerState getPlayerStateWithTimeout() throws Exception {
-        long timeout = TimeUnit.SECONDS.toMillis(20); // 20 seconds timeout
+        long timeout = TimeUnit.SECONDS.toMillis(20);
         long startTime = System.currentTimeMillis();
 
         while (true) {
-            // Check if the timeout has been reached
             if (System.currentTimeMillis() - startTime > timeout) {
                 throw new TimeoutException("Timed out waiting for player state");
             }
 
-            // Attempt to get the player state
             PlayerState playerState = mSpotifyAppRemote.getPlayerApi().getPlayerState().await().getData();
             if (playerState != null) {
-                return playerState; // Return player state if successfully retrieved
+                return playerState;
             }
 
-            // Add a small delay before retrying
             try {
-                Thread.sleep(500); // Retry every 500 ms
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 throw new Exception("Thread interrupted while waiting for player state", e);
             }
         }
     }
 
+    /**
+     * Authenticates the user with Spotify.
+     */
     public void authenticateSpotify() {
         AuthorizationRequest.Builder builder = new AuthorizationRequest.Builder(CLIENT_ID,
                 AuthorizationResponse.Type.TOKEN, REDIRECT_URI);
