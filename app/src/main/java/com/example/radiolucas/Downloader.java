@@ -2,8 +2,6 @@ package com.example.radiolucas;
 
 import android.util.Log;
 
-import com.example.radiolucas.cover.CoverInfo;
-
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -20,13 +18,13 @@ public class Downloader {
     /**
      * Downloads a file from the URL specified in the CoverInfo object and returns it as a byte array.
      *
-     * @param coverInfo the CoverInfo object containing the URL and file name
+     * @param spotifyInfo the CoverInfo object containing the URL and file name
      * @return the downloaded file as a byte array
      * @throws RuntimeException if an error occurs during the download
      */
-    public byte[] downloadFile(CoverInfo coverInfo) {
+    public byte[] downloadFile(SpotifyInfo spotifyInfo) {
         try {
-            URL url = new URL(coverInfo.cover_url);
+            URL url = new URL(spotifyInfo.cover_url);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.connect();
 
@@ -38,7 +36,7 @@ public class Downloader {
             try (InputStream input = new BufferedInputStream(connection.getInputStream());
                  ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
 
-                Log.e("Cover_Downloader", "Téléchargement en cours : ");
+                Log.e("Cover_Downloader", "Téléchargement en cours");
                 byte[] buffer = new byte[4096];
                 int count;
 

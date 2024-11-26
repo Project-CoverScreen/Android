@@ -7,34 +7,29 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.radiolucas.cover.CoverInfo;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.spotify.sdk.android.auth.AuthorizationClient;
 import com.spotify.sdk.android.auth.AuthorizationResponse;
 
+/**
+ * MainActivity class handles the main operations of the application, including Spotify authentication and cover information updates.
+ */
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE = 1337;
     private static final String TAG = "MainActivity";
-    public String UriSpotify;
 
-    private Spotify spotify;
-    private SaveManager coverSaveManager;
+    public String UriSpotify;
+    private SpotifyConnection spotifyConnection;
+    private SpotifyInfo spotifyInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Initialisation des classes nécessaires
-        spotify = new Spotify(this);
-        coverSaveManager = new SaveManager(this);
-
-        // Authentification Spotify
-        spotify.authenticateSpotify();
-
-        // Préparation des répertoires pour les couvertures
-        coverSaveManager.createCoverDirectories();
+        spotifyConnection = new SpotifyConnection(this);
+        spotifyConnection.authenticateSpotify();
     }
 
     @Override
@@ -42,13 +37,13 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, intent);
 
         if (requestCode == REQUEST_CODE) {
-            // Gestion de la réponse de l'authentification Spotify
+            // Handle Spotify authentication response
             AuthorizationResponse response = AuthorizationClient.getResponse(resultCode, intent);
 
             switch (response.getType()) {
                 case TOKEN:
                     Log.d(TAG, "Auth successful. Token received.");
-                    spotify.connectToSpotifyRemote(response.getAccessToken());
+                    spotifyConnection.connectToSpotifyRemote(response.getAccessToken());
                     break;
 
                 case ERROR:
@@ -58,33 +53,28 @@ public class MainActivity extends AppCompatActivity {
                 default:
                     Log.w(TAG, "Unexpected response type: " + response.getType());
             }
-            Log.e(TAG, "Auth response: " + UriSpotify);
+            Log.e(TAG, "Auth response received: " + response.getType());
         }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-
-        // Déconnexion de Spotify pour éviter les fuites mémoire
-        if (spotify.mSpotifyAppRemote != null && spotify.mSpotifyAppRemote.isConnected()) {
-            SpotifyAppRemote.disconnect(spotify.mSpotifyAppRemote);
+        if (spotifyConnection.mSpotifyAppRemote != null && spotifyConnection.mSpotifyAppRemote.isConnected()) {
+            SpotifyAppRemote.disconnect(spotifyConnection.mSpotifyAppRemote);
         }
     }
 
     /**
-     * Définit l'URI de la couverture et initialise CoverInfo.
+     * Updates the song information with the provided cover information.
      *
-     * @param UriSpotify l'URI de la couverture Spotify
+     * @param spotifyInfo the cover information to update
      */
-    public String setCoverUri(String UriSpotify) {
-        if (UriSpotify != null && !UriSpotify.isEmpty()) {
-            Log.d(TAG, "Cover URI received: " + UriSpotify);
-            CoverInfo coverInfo = new CoverInfo(UriSpotify); // Créer un objet CoverInfo avec l'URI
-            return this.UriSpotify;
-        } else {
-            Log.w(TAG, "Cover URI is null or empty.");
-            return "STTTTTTTTTTTTTTTTTTTTTTTTOOOOOOOOOOOOOOOOOOOOOOOOP";
-        }
+    public void updateSongInformation(SpotifyInfo spotifyInfo) {
+        Log.d(TAG, "Cover URI received: " + UriSpotify);
+        this.spotifyInfo = spotifyInfo;
+        // Update UI to show image
+        SaveManager saveManager = new SaveManager(this);
+        saveManager.saveFile(this.spotifyInfo.coverData, this.spotifyInfo.cover_name, ".jpg", SaveManager.StorageLocation.NATIVE);
     }
 }

@@ -20,7 +20,7 @@ import java.util.concurrent.TimeoutException;
 /**
  * The Spotify class provides functionality to connect to the Spotify app remote and authenticate the user.
  */
-public class Spotify {
+public class SpotifyConnection {
 
     private static final String CLIENT_ID = "fc99f5a7950c4d11b44dca56a05bffc6"; // Replace with your client ID
     private static final String REDIRECT_URI = "https://google.com/";
@@ -28,13 +28,14 @@ public class Spotify {
     private final MainActivity activity;
     public SpotifyAppRemote mSpotifyAppRemote;
     public String Uri;
+    SpotifyInfo spotifyInfo;
 
     /**
      * Constructs a new Spotify instance.
      *
      * @param context the main activity of the application
      */
-    public Spotify(MainActivity context) {
+    public SpotifyConnection(MainActivity context) {
         this.activity = context;
     }
 
@@ -60,9 +61,9 @@ public class Spotify {
                 mSpotifyAppRemote.getPlayerApi().subscribeToPlayerState().setEventCallback(playerState -> {
                     fetchUriAsync()
                             .thenAccept(uri -> {
+                                activity.updateSongInformation(new SpotifyInfo(uri));
                                 activity.runOnUiThread(() -> {
                                     Toast.makeText(activity, "Cover URI : " + uri, Toast.LENGTH_LONG).show();
-                                    activity.setCoverUri(uri);
                                 });
                                 Log.e("SpotifyRemote", "Cover URI : " + uri);
                             })
@@ -85,7 +86,7 @@ public class Spotify {
      *
      * @return a CompletableFuture containing the URI
      */
-    private CompletableFuture<String> fetchUriAsync() {
+    public CompletableFuture<String> fetchUriAsync() {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 PlayerState playerState = getPlayerStateWithTimeout();
