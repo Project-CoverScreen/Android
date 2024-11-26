@@ -1,8 +1,11 @@
 package com.example.radiolucas;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
+import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,6 +13,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.spotify.sdk.android.auth.AuthorizationClient;
 import com.spotify.sdk.android.auth.AuthorizationResponse;
+
+import java.io.File;
 
 /**
  * MainActivity class handles the main operations of the application, including Spotify authentication and cover information updates.
@@ -55,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
             }
             Log.e(TAG, "Auth response received: " + response.getType());
         }
+        //imageAfficher();
     }
 
     @Override
@@ -76,5 +82,13 @@ public class MainActivity extends AppCompatActivity {
         // Update UI to show image
         SaveManager saveManager = new SaveManager(this);
         saveManager.saveFile(this.spotifyInfo.coverData, this.spotifyInfo.cover_name, ".jpg", SaveManager.StorageLocation.NATIVE);
+        imageAfficher();
+    }
+
+    public void imageAfficher() {
+        ImageView cover = findViewById(R.id.Spotifycover);
+        Uri uri = Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "Cover/native/"+ spotifyInfo.cover_name +".jpg"));
+        cover.setImageURI(uri);
+        //new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "Cover/native");
     }
 }

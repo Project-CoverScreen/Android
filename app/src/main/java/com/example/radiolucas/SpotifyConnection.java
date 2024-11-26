@@ -61,9 +61,13 @@ public class SpotifyConnection {
                 mSpotifyAppRemote.getPlayerApi().subscribeToPlayerState().setEventCallback(playerState -> {
                     fetchUriAsync()
                             .thenAccept(uri -> {
-                                activity.updateSongInformation(new SpotifyInfo(uri));
-                                activity.runOnUiThread(() -> {
-                                    Toast.makeText(activity, "Cover URI : " + uri, Toast.LENGTH_LONG).show();
+                                SpotifyInfo spotifyInfo = new SpotifyInfo(uri);
+                                activity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        activity.updateSongInformation(spotifyInfo);
+                                        Toast.makeText(activity, "Cover URI : " + uri, Toast.LENGTH_LONG).show();
+                                    }
                                 });
                                 Log.e("SpotifyRemote", "Cover URI : " + uri);
                             })
