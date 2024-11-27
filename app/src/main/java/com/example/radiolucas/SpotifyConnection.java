@@ -60,16 +60,16 @@ public class SpotifyConnection {
                 // Subscribe to player state and fetch asynchronously
                 mSpotifyAppRemote.getPlayerApi().subscribeToPlayerState().setEventCallback(playerState -> {
                     fetchUriAsync()
-                            .thenAccept(uri -> {
-                                SpotifyInfo spotifyInfo = new SpotifyInfo(uri);
+                            .thenAccept(SpotifyInfo -> {
+                                spotifyInfo = SpotifyInfo;
                                 activity.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        activity.updateSongInformation(spotifyInfo);
-                                        Toast.makeText(activity, "Cover URI : " + uri, Toast.LENGTH_LONG).show();
+                                        activity.updateSongInformation(SpotifyInfo);
+                                        Toast.makeText(activity, "Track : " + spotifyInfo.trackName, Toast.LENGTH_LONG).show();
                                     }
                                 });
-                                Log.d("SpotifyRemote", "Cover URI : " + uri);
+                                Log.d("SpotifyRemote", "Cover URI : " + spotifyInfo.coverUrl);
                             })
                             .exceptionally(e -> {
                                 Log.e("SpotifyRemote", "Error fetching URI asynchronously", e);
@@ -90,11 +90,18 @@ public class SpotifyConnection {
      *
      * @return a CompletableFuture containing the URI
      */
-    public CompletableFuture<String> fetchUriAsync() {
+    public CompletableFuture<SpotifyInfo> fetchUriAsync() {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 PlayerState playerState = getPlayerStateWithTimeout();
-                return playerState.track.imageUri.raw;
+                String albumName = playerState.track.album.name;
+                String trackName = playerState.track.name;
+                String artistName = playerState.track.artist.name;
+                String imageUri = playerState.track.imageUri.raw;
+
+                Log.v("SpotifyRemote", "Track Info: " + albumName + " - " + trackName + " - " + artistName);
+
+                return new SpotifyInfo(imageUri, albumName, artistName, trackName);
             } catch (Exception e) {
                 throw new RuntimeException("Failed to fetch player state", e);
             }

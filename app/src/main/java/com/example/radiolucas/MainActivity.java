@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         this.spotifyInfo = spotifyInfo;
         // Update UI to show image
         SaveManager saveManager = new SaveManager(this);
-        saveManager.saveFile(this.spotifyInfo.coverData, this.spotifyInfo.cover_name, ".jpg", SaveManager.StorageLocation.NATIVE);
+        saveManager.saveFile(this.spotifyInfo.coverData, this.spotifyInfo.coverName, ".jpg", SaveManager.StorageLocation.NATIVE);
         Resize resize = new Resize(this);
         resize.Image(saveManager.getCoverPath(SaveManager.StorageLocation.NATIVE, this.spotifyInfo), saveManager.getCoverPath(SaveManager.StorageLocation.RESIZE, this.spotifyInfo));
 
@@ -98,14 +98,18 @@ public class MainActivity extends AppCompatActivity {
     public void imageAfficher() {
         ImageView coverOG = findViewById(R.id.Spotifycover);
         ImageView coverRE = findViewById(R.id.ResizeCover);
-        Uri uriOG = Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "Cover/native/" + spotifyInfo.cover_name + ".jpg"));
-        Uri uriRE = Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "Cover/resize/" + spotifyInfo.cover_name + ".jpg"));
+        Uri uriOG = Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "Cover/native/" + spotifyInfo.coverName + ".jpg"));
+        Uri uriRE = Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "Cover/resize/" + spotifyInfo.coverName + ".jpg"));
         coverOG.setImageURI(uriOG);
         coverRE.setImageURI(uriRE);
     }
 
     public void texteAfficher() {
-        TextView titreSong = findViewById(R.id.resizename);
-        titreSong.setText("testsuper");
+        TextView album = findViewById(R.id.albumName);
+        album.setText(spotifyInfo.albumName);
+        TextView artiste = findViewById(R.id.artisteName);
+        artiste.setText(spotifyInfo.artistName);
+        TextView song = findViewById(R.id.resizeName);
+        song.setText(spotifyInfo.trackName);
     }
 }

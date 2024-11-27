@@ -24,7 +24,7 @@ public class Downloader {
      */
     public byte[] downloadFile(SpotifyInfo spotifyInfo) {
         try {
-            URL url = new URL(spotifyInfo.cover_url);
+            URL url = new URL(spotifyInfo.coverUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.connect();
 

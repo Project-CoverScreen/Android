@@ -6,34 +6,47 @@ import android.util.Log;
 public class SpotifyInfo {
 
     public Context context;
-    public String spotify_id = "";      // type spotify:image:ab67616d0000b273f33c3b87535a0f89bda5f5be
-    public String cover_name = "";      // type ab67616d0000b273f33c3b87535a0f89bda5f5be
-    public String cover_url = "";       // type https://i.scdn.co/image/ab67616d0000b273f33c3b87535a0f89bda5f5be
+
+    public String coverUri = "";      // type spotify:image:ab67616d0000b273f33c3b87535a0f89bda5f5be
+    public String coverName = "";      // type ab67616d0000b273f33c3b87535a0f89bda5f5be
+    public String coverUrl = "";       // type https://i.scdn.co/image/ab67616d0000b273f33c3b87535a0f89bda5f5be
     public byte[] coverData;
 
-    public SpotifyInfo(String Spotify_id) {
-        coverName(Spotify_id);
+    public String albumName;
+    public String artistName;
+    public String trackName;
+
+    public SpotifyInfo(String coverUri, String albumName, String artistName, String trackName ) {
+        coverName(coverUri);
         coverDl(context);
-        coverArtiste();
-
-
+        album(albumName);
+        artist(artistName);
+        track(trackName);
     }
 
     private void coverName(String Spotify_id) {
-        this.spotify_id = Spotify_id;
-        Log.v("SpotifyInfo", "Spotify ID : " + spotify_id);
-        this.cover_name = spotify_id.replace("spotify:image:", "");
-        Log.v("CoverInfo", "Cover Name : " + cover_name);
-        this.cover_url = spotify_id.replace("spotify:image:", "https://i.scdn.co/image/");
-        Log.v("CoverInfo", "Cover URL : " + cover_url);
+        this.coverUri = Spotify_id;
+        Log.v("SpotifyInfo", "Spotify ID : " + coverUri);
+        this.coverName = coverUri.replace("spotify:image:", "");
+        Log.v("CoverInfo", "Cover Name : " + coverName);
+        this.coverUrl = coverUri.replace("spotify:image:", "https://i.scdn.co/image/");
+        Log.v("CoverInfo", "Cover URL : " + coverUrl);
     }
 
     private void coverDl(Context context) {
         Downloader downloader = new Downloader();
-        this.coverData = downloader.downloadFile(this);
+        coverData = downloader.downloadFile(this);
     }
 
-    private void coverArtiste() {
+    private void album(String albumName) {
+        this.albumName = albumName;
+    }
 
+    private void artist(String artistName) {
+        this.artistName = artistName;
+    }
+
+    private void track(String trackName) {
+        this.trackName = trackName;
     }
 }

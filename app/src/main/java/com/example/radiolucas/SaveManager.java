@@ -7,7 +7,6 @@ import android.util.Log;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * The SaveManager class provides functionality to manage saving files to the device.
@@ -174,11 +173,11 @@ public class SaveManager {
     public String getCoverPath(StorageLocation location, SpotifyInfo spotifyInfo) {
         switch (location) {
             case NATIVE:
-                return "/storage/emulated/0/Download/Cover/native/" + spotifyInfo.cover_name + ".jpg";
+                return "/storage/emulated/0/Download/Cover/native/" + spotifyInfo.coverName + ".jpg";
             case RESIZE:
-                return "/storage/emulated/0/Download/Cover/resize/" + spotifyInfo.cover_name + ".jpg";
+                return "/storage/emulated/0/Download/Cover/resize/" + spotifyInfo.coverName + ".jpg";
             case BIN:
-                return "/storage/emulated/0/Download/Cover/bin/" + spotifyInfo.cover_name + ".bin";
+                return "/storage/emulated/0/Download/Cover/bin/" + spotifyInfo.coverName + ".bin";
             default:
                 return null;
         }
