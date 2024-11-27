@@ -14,6 +14,7 @@ public class SpotifyInfo {
     public SpotifyInfo(String Spotify_id) {
         coverName(Spotify_id);
         coverDl(context);
+        coverArtiste();
 
 
     }
@@ -30,5 +31,9 @@ public class SpotifyInfo {
     private void coverDl(Context context) {
         Downloader downloader = new Downloader();
         this.coverData = downloader.downloadFile(this);
+    }
+
+    private void coverArtiste() {
+
     }
 }

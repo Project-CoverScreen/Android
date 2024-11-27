@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -86,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         resize.Image(saveManager.getCoverPath(SaveManager.StorageLocation.NATIVE, this.spotifyInfo), saveManager.getCoverPath(SaveManager.StorageLocation.RESIZE, this.spotifyInfo));
 
         imageAfficher();
-        //texteAfficher();
+        texteAfficher();
 
         Bin bin = new Bin();
         bin.sendImage(saveManager.getCoverPath(SaveManager.StorageLocation.RESIZE, this.spotifyInfo), saveManager.getCoverPath(SaveManager.StorageLocation.BIN, this.spotifyInfo));
@@ -104,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void texteAfficher() {
-
+        TextView titreSong = findViewById(R.id.resizename);
+        titreSong.setText("testsuper");
     }
 }
