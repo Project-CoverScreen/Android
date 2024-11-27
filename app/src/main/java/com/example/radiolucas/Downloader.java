@@ -36,7 +36,7 @@ public class Downloader {
             try (InputStream input = new BufferedInputStream(connection.getInputStream());
                  ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
 
-                Log.e("Cover_Downloader", "Téléchargement en cours");
+                Log.v("Cover_Downloader", "Téléchargement en cours");
                 byte[] buffer = new byte[4096];
                 int count;
 

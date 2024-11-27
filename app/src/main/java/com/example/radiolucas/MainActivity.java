@@ -35,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
 
         spotifyConnection = new SpotifyConnection(this);
         spotifyConnection.authenticateSpotify();
+
+        SaveManager saveManager = new SaveManager(this);
+        saveManager.createCoverDirectories();
     }
 
     @Override
@@ -60,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
             }
             Log.e(TAG, "Auth response received: " + response.getType());
         }
-        //imageAfficher();
     }
 
     @Override
@@ -80,15 +82,27 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "Cover URI received: " + UriSpotify);
         this.spotifyInfo = spotifyInfo;
         // Update UI to show image
+        Log.e(TAG, "Cover URI received: " + UriSpotify);
         SaveManager saveManager = new SaveManager(this);
         saveManager.saveFile(this.spotifyInfo.coverData, this.spotifyInfo.cover_name, ".jpg", SaveManager.StorageLocation.NATIVE);
+        Resize resize = new Resize(this);
+        resize.Image(saveManager.getCoverPath(SaveManager.StorageLocation.NATIVE, this.spotifyInfo), saveManager.getCoverPath(SaveManager.StorageLocation.RESIZE, this.spotifyInfo));
         imageAfficher();
+
+        Bin bin = new Bin();
+        bin.sendImage(saveManager.getCoverPath(SaveManager.StorageLocation.RESIZE, this.spotifyInfo), saveManager.getCoverPath(SaveManager.StorageLocation.BIN, this.spotifyInfo));
+
+
+
     }
 
     public void imageAfficher() {
-        ImageView cover = findViewById(R.id.Spotifycover);
-        Uri uri = Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "Cover/native/"+ spotifyInfo.cover_name +".jpg"));
-        cover.setImageURI(uri);
+        ImageView coverOG = findViewById(R.id.Spotifycover);
+        ImageView coverRE = findViewById(R.id.ResizeCover);
+        Uri uriOG = Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "Cover/native/"+ spotifyInfo.cover_name +".jpg"));
+        Uri uriRE = Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "Cover/resize/"+ spotifyInfo.cover_name +".jpg"));
+        coverOG.setImageURI(uriOG);
+        coverRE.setImageURI(uriRE);
         //new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "Cover/native");
     }
 }

@@ -39,7 +39,7 @@ public class StorageManager {
                 return null;
             }
         }
-        Log.e("StorageManager", "Dossier créé avec succès : " + folder.getAbsolutePath());
+        Log.v("StorageManager", "Dossier créé avec succès : " + folder.getAbsolutePath());
         return folder;
     }
 

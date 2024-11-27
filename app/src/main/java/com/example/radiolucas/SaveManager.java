@@ -7,6 +7,7 @@ import android.util.Log;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * The SaveManager class provides functionality to manage saving files to the device.
@@ -16,6 +17,7 @@ public class SaveManager {
     private static final String BASE_DIR = "Cover";
     private static final String NATIVE_SUBDIR = "native";
     private static final String RESIZE_SUBDIR = "resize";
+    private static final String BIN_SUBDIR = "resize";
 
     private final Context context;
 
@@ -35,10 +37,12 @@ public class SaveManager {
         File baseDir = getBaseDirectory();
         File nativeDir = new File(baseDir, NATIVE_SUBDIR);
         File resizeDir = new File(baseDir, RESIZE_SUBDIR);
+        File binDir = new File(baseDir, BIN_SUBDIR);
 
         createDirectory(baseDir);
         createDirectory(nativeDir);
         createDirectory(resizeDir);
+        createDirectory(binDir);
     }
 
     /**
@@ -111,6 +115,8 @@ public class SaveManager {
                 return new File(baseDir, NATIVE_SUBDIR);
             case RESIZE:
                 return new File(baseDir, RESIZE_SUBDIR);
+            case BIN:
+                return new File(baseDir, BIN_SUBDIR);
             default:
                 return baseDir;
         }
@@ -162,6 +168,19 @@ public class SaveManager {
      * Enumeration of storage locations.
      */
     public enum StorageLocation {
-        BASE, NATIVE, RESIZE
+        BASE, NATIVE, RESIZE, BIN
+    }
+
+    public String getCoverPath(StorageLocation location, SpotifyInfo spotifyInfo) {
+        switch (location) {
+            case NATIVE:
+                return "/storage/emulated/0/Download/Cover/native/" + spotifyInfo.cover_name + ".jpg";
+            case RESIZE:
+                return "/storage/emulated/0/Download/Cover/resize/" + spotifyInfo.cover_name + ".jpg";
+            case BIN:
+                return "/storage/emulated/0/Download/Cover/bin/" + spotifyInfo.cover_name + ".bin";
+            default:
+                return null;
+        }
     }
 }

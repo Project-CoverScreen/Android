@@ -16,6 +16,7 @@ import java.io.IOException;
  */
 public class Resize {
     private final Context context;
+    public SaveManager saveManager;
 
     /**
      * Constructs a new Resize instance.
@@ -39,7 +40,7 @@ public class Resize {
             FileOutputStream outStream = new FileOutputStream(new File(out));
             resizedImage.compress(Bitmap.CompressFormat.PNG, 100, outStream);
             outStream.close();
-            Log.e("Resize", "Image redimensionnée. ");
+            Log.v("Resize", "Image redimensionnée. ");
         } catch (IOException e) {
             Log.e("Resize", "Image non redimensionnée. " + e.getMessage());
         }

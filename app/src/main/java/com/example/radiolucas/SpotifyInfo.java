@@ -1,6 +1,7 @@
 package com.example.radiolucas;
 
 import android.content.Context;
+import android.util.Log;
 
 public class SpotifyInfo {
 
@@ -12,11 +13,11 @@ public class SpotifyInfo {
 
     public SpotifyInfo(String Spotify_id) {
         this.spotify_id = Spotify_id;
-        //Log.e("CoverInfo", "Spotify ID : " + spotify_id);
+        Log.v("SpotifyInfo", "Spotify ID : " + spotify_id);
         this.cover_name = spotify_id.replace("spotify:image:", "");
-        //Log.e("CoverInfo", "Cover Name : " + cover_name);
+        Log.v("CoverInfo", "Cover Name : " + cover_name);
         this.cover_url = spotify_id.replace("spotify:image:", "https://i.scdn.co/image/");
-        //Log.e("CoverInfo", "Cover URL : " + cover_url);
+        Log.v("CoverInfo", "Cover URL : " + cover_url);
         Downloader downloader = new Downloader();
         coverData = downloader.downloadFile(this);
 

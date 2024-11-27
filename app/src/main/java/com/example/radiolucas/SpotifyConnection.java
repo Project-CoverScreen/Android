@@ -55,7 +55,7 @@ public class SpotifyConnection {
             @Override
             public void onConnected(SpotifyAppRemote spotifyAppRemote) {
                 mSpotifyAppRemote = spotifyAppRemote;
-                Log.e("SpotifyRemote", "Connected! Yay!");
+                Log.d("SpotifyRemote", "Connected! Yay!");
 
                 // Subscribe to player state and fetch asynchronously
                 mSpotifyAppRemote.getPlayerApi().subscribeToPlayerState().setEventCallback(playerState -> {
@@ -69,7 +69,7 @@ public class SpotifyConnection {
                                         Toast.makeText(activity, "Cover URI : " + uri, Toast.LENGTH_LONG).show();
                                     }
                                 });
-                                Log.e("SpotifyRemote", "Cover URI : " + uri);
+                                Log.d("SpotifyRemote", "Cover URI : " + uri);
                             })
                             .exceptionally(e -> {
                                 Log.e("SpotifyRemote", "Error fetching URI asynchronously", e);
