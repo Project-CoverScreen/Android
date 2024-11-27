@@ -79,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
      * @param spotifyInfo the cover information to update
      */
     public void updateSongInformation(SpotifyInfo spotifyInfo) {
-        Log.d(TAG, "Cover URI received: " + UriSpotify);
         this.spotifyInfo = spotifyInfo;
         // Update UI to show image
         Log.e(TAG, "Cover URI received: " + UriSpotify);
@@ -87,11 +86,11 @@ public class MainActivity extends AppCompatActivity {
         saveManager.saveFile(this.spotifyInfo.coverData, this.spotifyInfo.cover_name, ".jpg", SaveManager.StorageLocation.NATIVE);
         Resize resize = new Resize(this);
         resize.Image(saveManager.getCoverPath(SaveManager.StorageLocation.NATIVE, this.spotifyInfo), saveManager.getCoverPath(SaveManager.StorageLocation.RESIZE, this.spotifyInfo));
+
         imageAfficher();
 
         Bin bin = new Bin();
         bin.sendImage(saveManager.getCoverPath(SaveManager.StorageLocation.RESIZE, this.spotifyInfo), saveManager.getCoverPath(SaveManager.StorageLocation.BIN, this.spotifyInfo));
-
 
 
     }
@@ -99,10 +98,9 @@ public class MainActivity extends AppCompatActivity {
     public void imageAfficher() {
         ImageView coverOG = findViewById(R.id.Spotifycover);
         ImageView coverRE = findViewById(R.id.ResizeCover);
-        Uri uriOG = Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "Cover/native/"+ spotifyInfo.cover_name +".jpg"));
-        Uri uriRE = Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "Cover/resize/"+ spotifyInfo.cover_name +".jpg"));
+        Uri uriOG = Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "Cover/native/" + spotifyInfo.cover_name + ".jpg"));
+        Uri uriRE = Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "Cover/resize/" + spotifyInfo.cover_name + ".jpg"));
         coverOG.setImageURI(uriOG);
         coverRE.setImageURI(uriRE);
-        //new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "Cover/native");
     }
 }
