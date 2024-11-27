@@ -12,14 +12,23 @@ public class SpotifyInfo {
     public byte[] coverData;
 
     public SpotifyInfo(String Spotify_id) {
+        coverName(Spotify_id);
+        coverDl(context);
+
+
+    }
+
+    private void coverName(String Spotify_id) {
         this.spotify_id = Spotify_id;
         Log.v("SpotifyInfo", "Spotify ID : " + spotify_id);
         this.cover_name = spotify_id.replace("spotify:image:", "");
         Log.v("CoverInfo", "Cover Name : " + cover_name);
         this.cover_url = spotify_id.replace("spotify:image:", "https://i.scdn.co/image/");
         Log.v("CoverInfo", "Cover URL : " + cover_url);
-        Downloader downloader = new Downloader();
-        coverData = downloader.downloadFile(this);
+    }
 
+    private void coverDl(Context context) {
+        Downloader downloader = new Downloader();
+        this.coverData = downloader.downloadFile(this);
     }
 }

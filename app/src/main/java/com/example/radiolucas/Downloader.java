@@ -44,7 +44,7 @@ public class Downloader {
                     byteArrayOutputStream.write(buffer, 0, count);
                 }
 
-                Log.e("Downloader", "Téléchargement terminé");
+                Log.v("Downloader", "Téléchargement terminé");
                 return byteArrayOutputStream.toByteArray();
             }
         } catch (MalformedURLException e) {

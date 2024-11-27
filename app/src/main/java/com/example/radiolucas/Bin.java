@@ -48,7 +48,6 @@ public class Bin {
             fos.write(buffer.array());
             fos.close();
 
-            Log.d("Bin", "CRC: " + crcValue);
         } catch (IOException e) {
             Log.e("Bin", "Error processing image", e);
         }

@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
                 default:
                     Log.w(TAG, "Unexpected response type: " + response.getType());
             }
-            Log.e(TAG, "Auth response received: " + response.getType());
         }
     }
 
@@ -81,13 +80,13 @@ public class MainActivity extends AppCompatActivity {
     public void updateSongInformation(SpotifyInfo spotifyInfo) {
         this.spotifyInfo = spotifyInfo;
         // Update UI to show image
-        Log.e(TAG, "Cover URI received: " + UriSpotify);
         SaveManager saveManager = new SaveManager(this);
         saveManager.saveFile(this.spotifyInfo.coverData, this.spotifyInfo.cover_name, ".jpg", SaveManager.StorageLocation.NATIVE);
         Resize resize = new Resize(this);
         resize.Image(saveManager.getCoverPath(SaveManager.StorageLocation.NATIVE, this.spotifyInfo), saveManager.getCoverPath(SaveManager.StorageLocation.RESIZE, this.spotifyInfo));
 
         imageAfficher();
+        //texteAfficher();
 
         Bin bin = new Bin();
         bin.sendImage(saveManager.getCoverPath(SaveManager.StorageLocation.RESIZE, this.spotifyInfo), saveManager.getCoverPath(SaveManager.StorageLocation.BIN, this.spotifyInfo));
@@ -102,5 +101,9 @@ public class MainActivity extends AppCompatActivity {
         Uri uriRE = Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "Cover/resize/" + spotifyInfo.cover_name + ".jpg"));
         coverOG.setImageURI(uriOG);
         coverRE.setImageURI(uriRE);
+    }
+
+    public void texteAfficher() {
+
     }
 }
