@@ -66,6 +66,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d("Lifecycle", "App mise en pause");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("Lifecycle", "App reprise");
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         if (spotifyConnection.mSpotifyAppRemote != null && spotifyConnection.mSpotifyAppRemote.isConnected()) {
@@ -80,9 +92,12 @@ public class MainActivity extends AppCompatActivity {
      */
     public void updateSongInformation(SpotifyInfo spotifyInfo) {
         this.spotifyInfo = spotifyInfo;
+        TimerLogger timerLogger = new TimerLogger();
         // Update UI to show image
+        timerLogger.start();
         SaveManager saveManager = new SaveManager(this);
         saveManager.saveFile(this.spotifyInfo.coverData, this.spotifyInfo.coverName, ".jpg", SaveManager.StorageLocation.NATIVE);
+
         Resize resize = new Resize(this);
         resize.Image(saveManager.getCoverPath(SaveManager.StorageLocation.NATIVE, this.spotifyInfo), saveManager.getCoverPath(SaveManager.StorageLocation.RESIZE, this.spotifyInfo));
 
@@ -92,7 +107,8 @@ public class MainActivity extends AppCompatActivity {
         Bin bin = new Bin();
         bin.sendImage(saveManager.getCoverPath(SaveManager.StorageLocation.RESIZE, this.spotifyInfo), saveManager.getCoverPath(SaveManager.StorageLocation.BIN, this.spotifyInfo));
 
-
+        timerLogger.stop();
+        timerLogger.logDuration("MainActivity");
     }
 
     public void imageAfficher() {
