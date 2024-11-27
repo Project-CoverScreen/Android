@@ -3,9 +3,12 @@ package com.example.radiolucas;
 import android.content.Context;
 import android.util.Log;
 
+import com.spotify.protocol.types.Track;
+
 public class SpotifyInfo {
 
     public Context context;
+    public Track track;
 
     public String coverUri = "";      // type spotify:image:ab67616d0000b273f33c3b87535a0f89bda5f5be
     public String coverName = "";      // type ab67616d0000b273f33c3b87535a0f89bda5f5be
@@ -16,12 +19,14 @@ public class SpotifyInfo {
     public String artistName;
     public String trackName;
 
-    public SpotifyInfo(String coverUri, String albumName, String artistName, String trackName ) {
-        coverName(coverUri);
+    public SpotifyInfo(Track track) {
+        this.track = track;
+
+        coverName(track.imageUri.raw);
         coverDl(context);
-        album(albumName);
-        artist(artistName);
-        track(trackName);
+        album(track.album.name);
+        artist(track.artist.name);
+        track(track.name);
     }
 
     private void coverName(String Spotify_id) {

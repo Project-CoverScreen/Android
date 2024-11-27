@@ -9,6 +9,7 @@ import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.spotify.protocol.types.PlayerState;
+import com.spotify.protocol.types.Track;
 import com.spotify.sdk.android.auth.AuthorizationClient;
 import com.spotify.sdk.android.auth.AuthorizationRequest;
 import com.spotify.sdk.android.auth.AuthorizationResponse;
@@ -94,14 +95,11 @@ public class SpotifyConnection {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 PlayerState playerState = getPlayerStateWithTimeout();
-                String albumName = playerState.track.album.name;
-                String trackName = playerState.track.name;
-                String artistName = playerState.track.artist.name;
-                String imageUri = playerState.track.imageUri.raw;
+                Track track = playerState.track;
 
-                Log.v("SpotifyRemote", "Track Info: " + albumName + " - " + trackName + " - " + artistName);
+                Log.v("SpotifyRemote", "Track Info: " + track.album.name + " - " + track.artist.name + " - " + track.name);
 
-                return new SpotifyInfo(imageUri, albumName, artistName, trackName);
+                return new SpotifyInfo(track);
             } catch (Exception e) {
                 throw new RuntimeException("Failed to fetch player state", e);
             }

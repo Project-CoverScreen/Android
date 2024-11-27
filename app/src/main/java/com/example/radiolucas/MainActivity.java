@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
         TimerLogger timerLogger = new TimerLogger();
         // Update UI to show image
         timerLogger.start();
+
         SaveManager saveManager = new SaveManager(this);
         saveManager.saveFile(this.spotifyInfo.coverData, this.spotifyInfo.coverName, ".jpg", SaveManager.StorageLocation.NATIVE);
 
