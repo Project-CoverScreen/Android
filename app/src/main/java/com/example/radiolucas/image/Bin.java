@@ -1,4 +1,4 @@
-package com.example.radiolucas;
+package com.example.radiolucas.image;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

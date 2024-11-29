@@ -1,4 +1,4 @@
-package com.example.radiolucas;
+package com.example.radiolucas.utils;
 
 import android.util.Log;
 

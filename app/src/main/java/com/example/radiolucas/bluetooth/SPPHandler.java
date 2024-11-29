@@ -1,4 +1,4 @@
-package com.example.radiolucas;
+package com.example.radiolucas.bluetooth;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -8,13 +8,11 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.Log;
-import android.widget.EditText;
 
 import androidx.core.app.ActivityCompat;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 public class SPPHandler {

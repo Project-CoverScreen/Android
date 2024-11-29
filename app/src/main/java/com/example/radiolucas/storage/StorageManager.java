@@ -1,10 +1,10 @@
-package com.example.radiolucas;
+package com.example.radiolucas.storage;
 
 import android.util.Log;
 
+import com.example.radiolucas.MainActivity;
+
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 
 /**
  * The StorageManager class provides functionality to manage storage operations such as creating folders and files.

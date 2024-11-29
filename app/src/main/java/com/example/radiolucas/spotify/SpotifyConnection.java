@@ -1,10 +1,11 @@
-package com.example.radiolucas;
+package com.example.radiolucas.spotify;
 
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.example.radiolucas.MainActivity;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;

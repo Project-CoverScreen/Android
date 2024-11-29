@@ -11,6 +11,13 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.radiolucas.bluetooth.SPPHandler;
+import com.example.radiolucas.image.Bin;
+import com.example.radiolucas.image.Resize;
+import com.example.radiolucas.spotify.SpotifyConnection;
+import com.example.radiolucas.spotify.SpotifyInfo;
+import com.example.radiolucas.storage.SaveManager;
+import com.example.radiolucas.utils.TimerLogger;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.spotify.sdk.android.auth.AuthorizationClient;
 import com.spotify.sdk.android.auth.AuthorizationResponse;

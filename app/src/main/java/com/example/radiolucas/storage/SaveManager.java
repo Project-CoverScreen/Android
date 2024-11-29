@@ -1,8 +1,10 @@
-package com.example.radiolucas;
+package com.example.radiolucas.storage;
 
 import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
+
+import com.example.radiolucas.spotify.SpotifyInfo;
 
 import java.io.File;
 import java.io.FileOutputStream;

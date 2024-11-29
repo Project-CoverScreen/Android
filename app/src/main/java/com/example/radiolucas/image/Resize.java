@@ -1,4 +1,4 @@
-package com.example.radiolucas;
+package com.example.radiolucas.image;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -6,6 +6,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.Log;
+
+import com.example.radiolucas.storage.SaveManager;
 
 import java.io.File;
 import java.io.FileOutputStream;
