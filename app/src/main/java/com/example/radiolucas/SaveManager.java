@@ -100,6 +100,16 @@ public class SaveManager {
         }
     }
 
+    public byte [] readFile(String path) {
+        try {
+            File file = new File(path);
+            return java.nio.file.Files.readAllBytes(file.toPath());
+        } catch (IOException e) {
+            Log.e(TAG, "Error reading file", e);
+            return null;
+        }
+    }
+
     /**
      * Gets the target directory based on the storage location.
      *
