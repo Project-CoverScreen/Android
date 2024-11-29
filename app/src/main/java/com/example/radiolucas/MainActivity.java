@@ -110,10 +110,6 @@ public class MainActivity extends AppCompatActivity {
 
         timerLogger.stop();
         timerLogger.logDuration("MainActivity");
-        byte[] coverData = saveManager.readFile(saveManager.getCoverPath(SaveManager.StorageLocation.BIN, this.spotifyInfo));
-        SPPHandler sppHandler = new SPPHandler();
-        sppHandler.connectToDevice(this);
-        sppHandler.sendMessage(coverData);
     }
 
     public void imageAfficher() {
