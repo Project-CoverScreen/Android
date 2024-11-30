@@ -11,45 +11,70 @@ import java.nio.ByteBuffer;
 import java.util.zip.CRC32;
 
 public class Bin {
-
     private static final String TAG = "Bin";
+    private static final int TAILLE_IMAGE = 240;
+    private static final int TAILLE_ENTETE = 16;
+    private static final int TAILLE_PIED = 16;
+    private static final int CRC_SIZE = 4;
+    private static final String ENTETE = "PetitHeaderLoveU";
+    private static final String PIED = "PetitFootercFini";
 
-    public void sendImage(String in, String out) {
+    private static final int TAILLE_BUFFER = TAILLE_ENTETE + (TAILLE_IMAGE * TAILLE_IMAGE * 2) + CRC_SIZE + TAILLE_PIED;
+
+    public void sendImage(String entree, String sortie) {
+        Bitmap image = null;
         try {
-            Bitmap image = BitmapFactory.decodeFile(in);
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            options.inSampleSize = 1;
+
+            image = BitmapFactory.decodeFile(entree, options);
             if (image == null) {
-                Log.e("Bin", "Failed to decode image file: " + in);
+                Log.e(TAG, "Échec du décodage de l'image: " + entree);
                 return;
             }
 
-            ByteBuffer buffer = ByteBuffer.allocate((16 + (240 * 240 * 3) + 4 + 16));
+            ByteBuffer buffer = ByteBuffer.allocateDirect(TAILLE_BUFFER);
             CRC32 crc = new CRC32();
 
-            buffer.put("PetitHeaderLoveU".getBytes());
-            for (int y = 0; y < 240; y++) {
-                for (int x = 0; x < 240; x++) {
-                    int pixel = image.getPixel(x, y);
-                    buffer.put((byte) Color.red(pixel));
-                    buffer.put((byte) Color.green(pixel));
-                    buffer.put((byte) Color.blue(pixel));
-                    crc.update(Color.red(pixel) + Color.green(pixel) + Color.blue(pixel));
-                }
+            int[] pixels = new int[TAILLE_IMAGE * TAILLE_IMAGE];
+            image.getPixels(pixels, 0, TAILLE_IMAGE, 0, 0, TAILLE_IMAGE, TAILLE_IMAGE);
+
+            buffer.put(ENTETE.getBytes());
+
+            byte[] rgbBuffer = new byte[2];
+            for (int pixel : pixels) {
+                int red = (Color.red(pixel) >> 3) & 0x1F;     // 5 bits
+                int green = (Color.green(pixel) >> 2) & 0x3F;  // 6 bits
+                int blue = (Color.blue(pixel) >> 3) & 0x1F;    // 5 bits
+
+                int rgb565 = (red << 11) | (green << 5) | blue;
+                rgbBuffer[0] = (byte) (rgb565 >> 8);
+                rgbBuffer[1] = (byte) rgb565;
+
+                buffer.put(rgbBuffer);
+                crc.update(rgbBuffer);
             }
 
-            int crcValue = (int) crc.getValue();
-            buffer.put((byte) ((crcValue >> 24) & 0xFF));
-            buffer.put((byte) ((crcValue >> 16) & 0xFF));
-            buffer.put((byte) ((crcValue >> 8) & 0xFF));
-            buffer.put((byte) (crcValue & 0xFF));
+            long valeurCRC = crc.getValue();
+            buffer.putInt((int)valeurCRC);
 
-            buffer.put("PetitFootercFini".getBytes());
-            Log.d(TAG, "CRC : " + crcValue);
-            FileOutputStream fos = new FileOutputStream(out, false);
-            fos.write(buffer.array());
-            fos.close();
+            buffer.put(PIED.getBytes());
+
+            buffer.flip();
+            try (FileOutputStream fos = new FileOutputStream(sortie, false)) {
+                fos.getChannel().write(buffer);
+                fos.flush();
+            }
+
+//            Log.d(TAG, "CRC: " + valeurCRC);
 
         } catch (IOException e) {
-            Log.e("Bin", "Error processing image", e);
+            Log.e(TAG, "Erreur lors du traitement de l'image", e);
+        } finally {
+            if (image != null) {
+                image.recycle();
+            }
         }
     }
 }
