@@ -29,7 +29,6 @@ public class SpotifyConnection {
     private static final int REQUEST_CODE = 1337;
     private final MainActivity activity;
     public SpotifyAppRemote mSpotifyAppRemote;
-    public String Uri;
     SpotifyInfo spotifyInfo;
 
     /**
@@ -71,7 +70,6 @@ public class SpotifyConnection {
                                         Toast.makeText(activity, "Track : " + spotifyInfo.trackName, Toast.LENGTH_LONG).show();
                                     }
                                 });
-                                Log.d("SpotifyRemote", "Cover URI : " + spotifyInfo.coverUrl);
                             })
                             .exceptionally(e -> {
                                 Log.e("SpotifyRemote", "Error fetching URI asynchronously", e);

@@ -26,7 +26,7 @@ public class StorageManager {
      * Creates a folder in the external files directory of the application.
      *
      * @param folderName the name of the folder to create
-     * @return the created folder, or null if the folder could not be created
+     * @return the created folder, or null if the folder could not be created/
      */
     public File createAppFolder(String folderName) {
         File folder;

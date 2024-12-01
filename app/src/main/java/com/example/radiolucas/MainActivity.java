@@ -24,9 +24,6 @@ import com.spotify.sdk.android.auth.AuthorizationResponse;
 
 import java.io.File;
 
-/**
- * MainActivity class handles the main operations of the application, including Spotify authentication and cover information updates.
- */
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE = 1337;
@@ -53,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, intent);
 
         if (requestCode == REQUEST_CODE) {
-            // Handle Spotify authentication response
             AuthorizationResponse response = AuthorizationClient.getResponse(resultCode, intent);
 
             switch (response.getType()) {
@@ -100,27 +96,32 @@ public class MainActivity extends AppCompatActivity {
     public void updateSongInformation(SpotifyInfo spotifyInfo) {
         this.spotifyInfo = spotifyInfo;
         TimerLogger timerLogger = new TimerLogger();
-        // Update UI to show image
         timerLogger.start();
 
         SaveManager saveManager = new SaveManager(this);
-        saveManager.saveFile(this.spotifyInfo.coverData, this.spotifyInfo.coverName, ".jpg", SaveManager.StorageLocation.NATIVE);
+        if (saveManager.checkFileExists(saveManager.getCoverPath(SaveManager.StorageLocation.NATIVE, this.spotifyInfo))) {
+            Log.v(TAG, "Fichier déjà téléchargé");
+        } else {
+            Log.v(TAG, "Téléchargement du fichier");
+            saveManager.saveFile(this.spotifyInfo.coverData, this.spotifyInfo.coverName, ".jpg", SaveManager.StorageLocation.NATIVE);
 
-        Resize resize = new Resize(this);
-        resize.Image(saveManager.getCoverPath(SaveManager.StorageLocation.NATIVE, this.spotifyInfo), saveManager.getCoverPath(SaveManager.StorageLocation.RESIZE, this.spotifyInfo));
+            Resize resize = new Resize(this);
+            resize.Image(saveManager.getCoverPath(SaveManager.StorageLocation.NATIVE, this.spotifyInfo), saveManager.getCoverPath(SaveManager.StorageLocation.RESIZE, this.spotifyInfo));
+
+            Bin bin = new Bin();
+            bin.sendImage(saveManager.getCoverPath(SaveManager.StorageLocation.RESIZE, this.spotifyInfo), saveManager.getCoverPath(SaveManager.StorageLocation.BIN, this.spotifyInfo));
+
+            //byte[] coverData = saveManager.readFile(saveManager.getCoverPath(SaveManager.StorageLocation.BIN, this.spotifyInfo));
+            //SPPHandler sppHandler = new SPPHandler();
+            //sppHandler.connectToDevice(this);
+            //sppHandler.sendMessage(coverData);
+        }
 
         imageAfficher();
         texteAfficher();
-
-        Bin bin = new Bin();
-        bin.sendImage(saveManager.getCoverPath(SaveManager.StorageLocation.RESIZE, this.spotifyInfo), saveManager.getCoverPath(SaveManager.StorageLocation.BIN, this.spotifyInfo));
-
         timerLogger.stop();
         timerLogger.logDuration("MainActivity");
-        byte[] coverData = saveManager.readFile(saveManager.getCoverPath(SaveManager.StorageLocation.BIN, this.spotifyInfo));
-        SPPHandler sppHandler = new SPPHandler();
-        sppHandler.connectToDevice(this);
-        sppHandler.sendMessage(coverData);
+
     }
 
     public void imageAfficher() {

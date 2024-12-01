@@ -162,6 +162,12 @@ public class SaveManager {
         }
     }
 
+    public boolean checkFileExists(String coverPath) {
+        File file = new File(coverPath);
+        Log.e(TAG, "File exists: " + file.exists());
+        return file.exists();
+    }
+
     /**
      * Deletes a file.
      *
