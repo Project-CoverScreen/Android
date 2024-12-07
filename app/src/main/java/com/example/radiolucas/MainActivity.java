@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
         SaveManager saveManager = new SaveManager(this);
         byte[] coverData = saveManager.readFile(saveManager.getCoverPath(SaveManager.StorageLocation.BIN, this.spotifyInfo));
         BLE ble = new BLE(this);
-        ble.scanDevice();
+        ble.connect("74:9E:F5:D7:4E:20");
         ble.sendData(coverData);
         ble.disconnect();
     }
