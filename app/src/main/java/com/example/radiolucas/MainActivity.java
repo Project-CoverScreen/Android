@@ -11,7 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.radiolucas.bluetooth.SPPHandler;
+import com.example.radiolucas.bluetooth.BLE;
 import com.example.radiolucas.image.Bin;
 import com.example.radiolucas.image.Resize;
 import com.example.radiolucas.spotify.SpotifyConnection;
@@ -29,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE = 1337;
     private static final String TAG = "MainActivity";
 
-    public String UriSpotify;
     private SpotifyConnection spotifyConnection;
     private SpotifyInfo spotifyInfo;
 
@@ -69,18 +68,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d("Lifecycle", "App mise en pause");
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d("Lifecycle", "App reprise");
-    }
-
-    @Override
     protected void onStop() {
         super.onStop();
         if (spotifyConnection.mSpotifyAppRemote != null && spotifyConnection.mSpotifyAppRemote.isConnected()) {
@@ -99,29 +86,22 @@ public class MainActivity extends AppCompatActivity {
         timerLogger.start();
 
         SaveManager saveManager = new SaveManager(this);
-        if (saveManager.checkFileExists(saveManager.getCoverPath(SaveManager.StorageLocation.NATIVE, this.spotifyInfo))) {
-            Log.v(TAG, "Fichier déjà téléchargé");
-        } else {
-            Log.v(TAG, "Téléchargement du fichier");
-            saveManager.saveFile(this.spotifyInfo.coverData, this.spotifyInfo.coverName, ".jpg", SaveManager.StorageLocation.NATIVE);
 
-            Resize resize = new Resize(this);
-            resize.Image(saveManager.getCoverPath(SaveManager.StorageLocation.NATIVE, this.spotifyInfo), saveManager.getCoverPath(SaveManager.StorageLocation.RESIZE, this.spotifyInfo));
+        Log.v(TAG, "Téléchargement du fichier");
+        saveManager.saveFile(this.spotifyInfo.coverData, this.spotifyInfo.coverName, ".jpg", SaveManager.StorageLocation.NATIVE);
 
-            Bin bin = new Bin();
-            bin.sendImage(saveManager.getCoverPath(SaveManager.StorageLocation.RESIZE, this.spotifyInfo), saveManager.getCoverPath(SaveManager.StorageLocation.BIN, this.spotifyInfo));
+        Resize resize = new Resize(this);
+        resize.Image(saveManager.getCoverPath(SaveManager.StorageLocation.NATIVE, this.spotifyInfo), saveManager.getCoverPath(SaveManager.StorageLocation.RESIZE, this.spotifyInfo));
 
-            //byte[] coverData = saveManager.readFile(saveManager.getCoverPath(SaveManager.StorageLocation.BIN, this.spotifyInfo));
-            //SPPHandler sppHandler = new SPPHandler();
-            //sppHandler.connectToDevice(this);
-            //sppHandler.sendMessage(coverData);
-        }
+        Bin bin = new Bin();
+        bin.sendImage(saveManager.getCoverPath(SaveManager.StorageLocation.RESIZE, this.spotifyInfo), saveManager.getCoverPath(SaveManager.StorageLocation.BIN, this.spotifyInfo));
+
+        BluetoothSend();
 
         imageAfficher();
         texteAfficher();
         timerLogger.stop();
         timerLogger.logDuration("MainActivity");
-
     }
 
     public void imageAfficher() {
@@ -140,5 +120,20 @@ public class MainActivity extends AppCompatActivity {
         artiste.setText(spotifyInfo.artistName);
         TextView song = findViewById(R.id.resizeName);
         song.setText(spotifyInfo.trackName);
+    }
+
+    public void BluetoothSend() {
+        if (this.spotifyInfo != null) {
+            Log.e("MainActivity", "BluetoothSend");
+        } else {
+            Log.e("MainActivity", "SpotifyInfo is null");
+            return;
+        }
+        SaveManager saveManager = new SaveManager(this);
+        byte[] coverData = saveManager.readFile(saveManager.getCoverPath(SaveManager.StorageLocation.BIN, this.spotifyInfo));
+        BLE ble = new BLE(this);
+        ble.scanDevice();
+        ble.sendData(coverData);
+        ble.disconnect();
     }
 }
