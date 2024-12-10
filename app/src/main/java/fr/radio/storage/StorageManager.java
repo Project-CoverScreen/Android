@@ -1,8 +1,8 @@
-package com.example.radiolucas.storage;
+package fr.radio.storage;
 
 import android.util.Log;
 
-import com.example.radiolucas.MainActivity;
+import fr.radio.MainActivity;
 
 import java.io.File;
 

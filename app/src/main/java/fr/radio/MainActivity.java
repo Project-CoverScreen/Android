@@ -1,7 +1,9 @@
-package com.example.radiolucas;
+package fr.radio;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -10,14 +12,20 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
-import com.example.radiolucas.bluetooth.BLE;
-import com.example.radiolucas.image.Bin;
-import com.example.radiolucas.image.Resize;
-import com.example.radiolucas.spotify.SpotifyConnection;
-import com.example.radiolucas.spotify.SpotifyInfo;
-import com.example.radiolucas.storage.SaveManager;
-import com.example.radiolucas.utils.TimerLogger;
+import fr.radio.R;
+
+import fr.radio.bluetooth.BLE;
+import fr.radio.bluetooth.BluetoothPermissionManager;
+import fr.radio.image.Bin;
+import fr.radio.image.Resize;
+import fr.radio.packages.PackagesDef;
+import fr.radio.packages.PacketDrawImage;
+import fr.radio.spotify.SpotifyConnection;
+import fr.radio.spotify.SpotifyInfo;
+import fr.radio.storage.SaveManager;
+import fr.radio.utils.TimerLogger;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.spotify.sdk.android.auth.AuthorizationClient;
 import com.spotify.sdk.android.auth.AuthorizationResponse;
@@ -36,7 +44,24 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        BluetoothPermissionManager  permissionManager = new BluetoothPermissionManager(this, new BluetoothPermissionManager.PermissionCallback() {
+            @Override
+            public void onPermissionsGranted() {
+                Log.d(TAG, "Permissions BLE accordées. Démarrage du scan...");
+            }
 
+            @Override
+            public void onPermissionsDenied() {
+                Log.e(TAG, "Permissions BLE refusées. Le scan ne peut pas être effectué.");
+            }
+        });
+
+        // Vérifie et demande les permissions
+        if (!permissionManager.arePermissionsGranted()) {
+            permissionManager.requestPermissions();
+        } else {
+            Log.d(TAG, "Permissions BLE déjà accordées.");
+        }
         spotifyConnection = new SpotifyConnection(this);
         spotifyConnection.authenticateSpotify();
 
@@ -129,11 +154,24 @@ public class MainActivity extends AppCompatActivity {
             Log.e("MainActivity", "SpotifyInfo is null");
             return;
         }
+        PackagesDef packet = new PacketDrawImage();
         SaveManager saveManager = new SaveManager(this);
         byte[] coverData = saveManager.readFile(saveManager.getCoverPath(SaveManager.StorageLocation.BIN, this.spotifyInfo));
         BLE ble = new BLE(this);
-        ble.connect("74:9E:F5:D7:4E:20");
-        ble.sendData(coverData);
+        ble.connectToDevice("A0:85:E3:EA:14:09");
+        while(ble.characteristic == null)
+        {
+            try {
+                Log.e("MainActivity", "Waiting for characteristic");
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        byte[][] packets = packet.serializee();
+        for(int i = 0; i < packets.length; i++) {
+            ble.sendData(packets[i]);
+        }
         ble.disconnect();
     }
 }

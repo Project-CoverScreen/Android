@@ -1,9 +1,9 @@
-package com.example.radiolucas.spotify;
+package fr.radio.spotify;
 
 import android.content.Context;
 import android.util.Log;
 
-import com.example.radiolucas.image.Downloader;
+import fr.radio.image.Downloader;
 import com.spotify.protocol.types.Track;
 
 public class SpotifyInfo {

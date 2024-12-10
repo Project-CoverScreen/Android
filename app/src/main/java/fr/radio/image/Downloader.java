@@ -1,8 +1,8 @@
-package com.example.radiolucas.image;
+package fr.radio.image;
 
 import android.util.Log;
 
-import com.example.radiolucas.spotify.SpotifyInfo;
+import fr.radio.spotify.SpotifyInfo;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;

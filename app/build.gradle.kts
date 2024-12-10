@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.radiolucas"
+    namespace = "fr.radio"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.radiolucas"
+        applicationId = "fr.radio"
         minSdk = 33
         targetSdk = 33
         versionCode = 1

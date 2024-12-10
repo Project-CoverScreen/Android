@@ -1,4 +1,4 @@
-package com.example.radiolucas.bluetooth;
+package fr.radio.bluetooth;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;

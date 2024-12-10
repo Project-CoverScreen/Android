@@ -1,4 +1,4 @@
-package com.example.radiolucas.image;
+package fr.radio.image;
 
 import android.content.Context;
 import android.graphics.Bitmap;
