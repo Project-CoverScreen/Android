@@ -20,6 +20,7 @@ import fr.radio.bluetooth.BLE;
 import fr.radio.bluetooth.BluetoothPermissionManager;
 import fr.radio.image.Bin;
 import fr.radio.image.Resize;
+import fr.radio.packages.PackagesCreate;
 import fr.radio.packages.PackagesDef;
 import fr.radio.packages.PacketDrawImage;
 import fr.radio.spotify.SpotifyConnection;
@@ -120,8 +121,10 @@ public class MainActivity extends AppCompatActivity {
 
         Bin bin = new Bin();
         bin.sendImage(saveManager.getCoverPath(SaveManager.StorageLocation.RESIZE, this.spotifyInfo), saveManager.getCoverPath(SaveManager.StorageLocation.BIN, this.spotifyInfo));
-
-        BluetoothSend();
+        // je veux Log.e la ou est enregistré le fichier bin
+        Log.e(TAG, "updateSongInformation: " + saveManager.getCoverPath(SaveManager.StorageLocation.BIN, this.spotifyInfo));
+        //BluetoothSend();
+        test_packet();
 
         imageAfficher();
         texteAfficher();
@@ -168,10 +171,19 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-        byte[][] packets = packet.serializee();
-        for(int i = 0; i < packets.length; i++) {
-            ble.sendData(packets[i]);
-        }
-        ble.disconnect();
+//        byte[][] packets = packet.serialize();
+//        for(int i = 0; i < packets.length; i++) {
+//            ble.sendData(packets[i]);
+//        }
+//        ble.disconnect();
+    }
+
+    public void test_packet() {
+        PackagesCreate packagesCreate = new PackagesCreate(this);
+        SaveManager saveManager = new SaveManager(this);
+        byte[] coverData = saveManager.readFile(saveManager.getCoverPath(SaveManager.StorageLocation.BIN, this.spotifyInfo));
+        byte[] packets = packagesCreate.imageChunked(coverData);
+        Log.e("MainActivity", "test_packet ok");
+
     }
 }

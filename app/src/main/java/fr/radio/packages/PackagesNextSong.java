@@ -11,8 +11,8 @@ public class PackagesNextSong extends PackagesDef {
         super(PacketType.CHANGE_CURRENT_SONG);
     }
 
-    @Override
-    public byte[] serialize() throws UnsupportedOperationException {
+
+    public byte[] serializeert() throws UnsupportedOperationException {
         ByteBuffer buffer = ByteBuffer.allocate((20));
         buffer.put(songId.getBytes());
         return buffer.array();
