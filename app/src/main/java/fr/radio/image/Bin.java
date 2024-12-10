@@ -13,13 +13,9 @@ import java.util.zip.CRC32;
 public class Bin {
     private static final String TAG = "Bin";
     private static final int TAILLE_IMAGE = 240;
-    private static final int TAILLE_ENTETE = 16;
-    private static final int TAILLE_PIED = 16;
-    private static final int CRC_SIZE = 4;
-    private static final String ENTETE = "PetitHeaderLoveU";
-    private static final String PIED = "PetitFootercFini";
+    //private static final int CRC_SIZE = 4;
 
-    private static final int TAILLE_BUFFER = TAILLE_ENTETE + (TAILLE_IMAGE * TAILLE_IMAGE * 2) + CRC_SIZE + TAILLE_PIED;
+    private static final int TAILLE_BUFFER = (2 * TAILLE_IMAGE * TAILLE_IMAGE);
 
     public void sendImage(String entree, String sortie) {
         Bitmap image = null;
@@ -35,12 +31,10 @@ public class Bin {
             }
 
             ByteBuffer buffer = ByteBuffer.allocateDirect(TAILLE_BUFFER);
-            CRC32 crc = new CRC32();
+            //CRC32 crc = new CRC32();
 
             int[] pixels = new int[TAILLE_IMAGE * TAILLE_IMAGE];
             image.getPixels(pixels, 0, TAILLE_IMAGE, 0, 0, TAILLE_IMAGE, TAILLE_IMAGE);
-
-            buffer.put(ENTETE.getBytes());
 
             byte[] rgbBuffer = new byte[2];
             for (int pixel : pixels) {
@@ -53,21 +47,17 @@ public class Bin {
                 rgbBuffer[1] = (byte) rgb565;
 
                 buffer.put(rgbBuffer);
-                crc.update(rgbBuffer);
+                //crc.update(rgbBuffer);
             }
 
-            long valeurCRC = crc.getValue();
-            buffer.putInt((int)valeurCRC);
-
-            buffer.put(PIED.getBytes());
+            //long valeurCRC = crc.getValue();
+            //buffer.putInt((int)valeurCRC);
 
             buffer.flip();
             try (FileOutputStream fos = new FileOutputStream(sortie, false)) {
                 fos.getChannel().write(buffer);
                 fos.flush();
             }
-
-//            Log.d(TAG, "CRC: " + valeurCRC);
 
         } catch (IOException e) {
             Log.e(TAG, "Erreur lors du traitement de l'image", e);
