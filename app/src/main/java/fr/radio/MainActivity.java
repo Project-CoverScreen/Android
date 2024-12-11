@@ -1,5 +1,7 @@
 package fr.radio;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -9,6 +11,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,6 +34,7 @@ import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.spotify.sdk.android.auth.AuthorizationClient;
 import com.spotify.sdk.android.auth.AuthorizationResponse;
 
+
 import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
@@ -40,11 +44,13 @@ public class MainActivity extends AppCompatActivity {
 
     private SpotifyConnection spotifyConnection;
     private SpotifyInfo spotifyInfo;
+    public static Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         BluetoothPermissionManager  permissionManager = new BluetoothPermissionManager(this, new BluetoothPermissionManager.PermissionCallback() {
             @Override
             public void onPermissionsGranted() {
@@ -74,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
 
+
         if (requestCode == REQUEST_CODE) {
             AuthorizationResponse response = AuthorizationClient.getResponse(resultCode, intent);
 
@@ -101,11 +108,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Updates the song information with the provided cover information.
-     *
-     * @param spotifyInfo the cover information to update
-     */
     public void updateSongInformation(SpotifyInfo spotifyInfo) {
         this.spotifyInfo = spotifyInfo;
         TimerLogger timerLogger = new TimerLogger();
@@ -129,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
         imageAfficher();
         texteAfficher();
         timerLogger.stop();
-        timerLogger.logDuration("MainActivity");
+        timerLogger.logDuration("MainActivity 3");
     }
 
     public void imageAfficher() {
