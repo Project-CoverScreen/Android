@@ -13,7 +13,6 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -35,9 +34,7 @@ dependencies {
 
     implementation(libs.appcompat)
     implementation(libs.material)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
+    implementation ("androidx.fragment:fragment:1.8.5")
     implementation("com.google.code.gson:gson:2.8.9")
     implementation(files("libs/spotify-app-remote-release-0.8.0.aar"))
     implementation("com.spotify.android:auth:1.2.3")

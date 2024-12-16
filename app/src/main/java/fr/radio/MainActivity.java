@@ -1,23 +1,22 @@
 package fr.radio;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 
-import fr.radio.R;
+import com.spotify.android.appremote.api.SpotifyAppRemote;
+import com.spotify.sdk.android.auth.AuthorizationClient;
+import com.spotify.sdk.android.auth.AuthorizationResponse;
+
+import java.io.File;
 
 import fr.radio.bluetooth.BLE;
 import fr.radio.bluetooth.BluetoothPermissionManager;
@@ -30,28 +29,21 @@ import fr.radio.spotify.SpotifyConnection;
 import fr.radio.spotify.SpotifyInfo;
 import fr.radio.storage.SaveManager;
 import fr.radio.utils.TimerLogger;
-import com.spotify.android.appremote.api.SpotifyAppRemote;
-import com.spotify.sdk.android.auth.AuthorizationClient;
-import com.spotify.sdk.android.auth.AuthorizationResponse;
-
-
-import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int REQUEST_CODE = 1337;
     private static final String TAG = "MainActivity";
-
+    private static final int REQUEST_CODE = 1337;
+    public String last_played = "";
     private SpotifyConnection spotifyConnection;
     private SpotifyInfo spotifyInfo;
-    public static Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        BluetoothPermissionManager  permissionManager = new BluetoothPermissionManager(this, new BluetoothPermissionManager.PermissionCallback() {
+        BluetoothPermissionManager permissionManager = new BluetoothPermissionManager(this, new BluetoothPermissionManager.PermissionCallback() {
             @Override
             public void onPermissionsGranted() {
                 Log.d(TAG, "Permissions BLE accordées. Démarrage du scan...");
@@ -79,8 +71,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
-
-
         if (requestCode == REQUEST_CODE) {
             AuthorizationResponse response = AuthorizationClient.getResponse(resultCode, intent);
 
@@ -123,13 +113,13 @@ public class MainActivity extends AppCompatActivity {
 
         Bin bin = new Bin();
         bin.sendImage(saveManager.getCoverPath(SaveManager.StorageLocation.RESIZE, this.spotifyInfo), saveManager.getCoverPath(SaveManager.StorageLocation.BIN, this.spotifyInfo));
-        // je veux Log.e la ou est enregistré le fichier bin
-        Log.e(TAG, "updateSongInformation: " + saveManager.getCoverPath(SaveManager.StorageLocation.BIN, this.spotifyInfo));
-        //BluetoothSend();
+
+        BluetoothSend();
         test_packet();
 
         imageAfficher();
         texteAfficher();
+
         timerLogger.stop();
         timerLogger.logDuration("MainActivity 3");
     }
@@ -159,13 +149,17 @@ public class MainActivity extends AppCompatActivity {
             Log.e("MainActivity", "SpotifyInfo is null");
             return;
         }
+        if (this.last_played.equals(this.spotifyInfo.trackName)) {
+            Log.e("MainActivity", "Same song, not sending");
+            return;
+        }
+        this.last_played = this.spotifyInfo.trackName;
         PackagesDef packet = new PacketDrawImage();
         SaveManager saveManager = new SaveManager(this);
         byte[] coverData = saveManager.readFile(saveManager.getCoverPath(SaveManager.StorageLocation.BIN, this.spotifyInfo));
         BLE ble = new BLE(this);
         ble.connectToDevice("A0:85:E3:EA:14:09");
-        while(ble.characteristic == null)
-        {
+        while (ble.characteristic == null) {
             try {
                 Log.e("MainActivity", "Waiting for characteristic");
                 Thread.sleep(1000);
@@ -173,19 +167,20 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-//        byte[][] packets = packet.serialize();
-//        for(int i = 0; i < packets.length; i++) {
-//            ble.sendData(packets[i]);
-//        }
-//        ble.disconnect();
+        byte[][] packets = test_packet();
+        for (int i = 0; i < packets.length; i++) {
+            ble.sendData(packets[i]);
+        }
+        ble.disconnect();
     }
 
-    public void test_packet() {
+    public byte[][] test_packet() {
         PackagesCreate packagesCreate = new PackagesCreate(this);
         SaveManager saveManager = new SaveManager(this);
         byte[] coverData = saveManager.readFile(saveManager.getCoverPath(SaveManager.StorageLocation.BIN, this.spotifyInfo));
-        byte[] packets = packagesCreate.imageChunked(coverData);
-        Log.e("MainActivity", "test_packet ok");
 
+        byte[][] packets = packagesCreate.imageChunked(coverData);
+        Log.e("MainActivity", "test_packet ok");
+        return packets;
     }
 }

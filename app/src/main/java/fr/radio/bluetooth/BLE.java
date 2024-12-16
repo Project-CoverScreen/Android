@@ -150,7 +150,7 @@ public class BLE {
 
             // Add a small delay to avoid flooding the BLE connection
            try {
-                Thread.sleep(10); // Adjust delay as necessary
+                Thread.sleep(15); // Adjust delay as necessary
             } catch (InterruptedException e) {
                 Log.e(TAG, "Interruption lors de l'envoi des données.", e);
             }
