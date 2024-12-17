@@ -38,4 +38,5 @@ dependencies {
     implementation("com.google.code.gson:gson:2.8.9")
     implementation(files("libs/spotify-app-remote-release-0.8.0.aar"))
     implementation("com.spotify.android:auth:1.2.3")
+    implementation ("androidx.work:work-runtime:2.8.1")
 }

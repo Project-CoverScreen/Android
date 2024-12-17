@@ -12,18 +12,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-/**
- * The Downloader class provides functionality to download files from a given URL.
- */
+
 public class Downloader {
 
-    /**
-     * Downloads a file from the URL specified in the CoverInfo object and returns it as a byte array.
-     *
-     * @param spotifyInfo the CoverInfo object containing the URL and file name
-     * @return the downloaded file as a byte array
-     * @throws RuntimeException if an error occurs during the download
-     */
     public byte[] downloadFile(SpotifyInfo spotifyInfo) {
         try {
             URL url = new URL(spotifyInfo.coverUrl);
@@ -39,7 +30,7 @@ public class Downloader {
                  ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
 
                 Log.v("Cover_Downloader", "Téléchargement en cours");
-                byte[] buffer = new byte[4096];
+                byte[] buffer = new byte[256];
                 int count;
 
                 while ((count = input.read(buffer)) != -1) {

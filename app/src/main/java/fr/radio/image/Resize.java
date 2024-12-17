@@ -20,12 +20,10 @@ public class Resize {
 
     public void Image(String in, String out) {
         try {
-            // Configure BitmapFactory options for memory efficiency
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inJustDecodeBounds = true;
             BitmapFactory.decodeFile(in, options);
 
-            // Calculate inSampleSize
             options.inSampleSize = calculateInSampleSize(options, TARGET_SIZE, TARGET_SIZE);
             options.inJustDecodeBounds = false;
             options.inPreferredConfig = Bitmap.Config.RGB_565;
@@ -37,18 +35,16 @@ public class Resize {
                 return;
             }
 
-            // Use Matrix for resizing
             Bitmap resizedImage = resizeImageWithMatrix(originalImage, TARGET_SIZE, TARGET_SIZE);
             originalImage.recycle(); // Release the original bitmap
 
-            // Save with optimized settings
             File outFile = new File(out);
             try (FileOutputStream outStream = new FileOutputStream(outFile)) {
                 resizedImage.compress(Bitmap.CompressFormat.JPEG, 90, outStream);
                 outStream.flush();
             }
 
-            resizedImage.recycle(); // Release the resized bitmap
+            resizedImage.recycle();
             Log.v(TAG, "Image resized successfully");
 
         } catch (IOException e) {
