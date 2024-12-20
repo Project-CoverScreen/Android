@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
         Bin bin = new Bin();
         bin.sendImage(saveManager.getCoverPath(SaveManager.StorageLocation.RESIZE, this.spotifyInfo), saveManager.getCoverPath(SaveManager.StorageLocation.BIN, this.spotifyInfo));
 
-        BluetoothSend(); // BLE fun ! :D
+        BluetoothSend(); // BLE fun ! :D (send image to BLE device)
 
         imageAfficher();
         texteAfficher();
