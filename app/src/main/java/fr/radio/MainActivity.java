@@ -115,7 +115,6 @@ public class MainActivity extends AppCompatActivity {
         bin.sendImage(saveManager.getCoverPath(SaveManager.StorageLocation.RESIZE, this.spotifyInfo), saveManager.getCoverPath(SaveManager.StorageLocation.BIN, this.spotifyInfo));
 
         BluetoothSend();
-        test_packet();
 
         imageAfficher();
         texteAfficher();
